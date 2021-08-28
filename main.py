@@ -36,9 +36,9 @@ def create_lesson():
     pass
 
 
-def create_new_lesson(name, questions: list):
+def create_new_lesson(name, user, questions: list):
     id = next_id(Lesson, lessons)
-    lessons[id] = Lesson(name, questions, id)
+    lessons[id] = Lesson(name, user, questions, id)
 
 
 @app.route("/api/create/question")
@@ -55,6 +55,13 @@ def add_user():
     else:
         users[username] = User(username, password)
 
+@app.route("/api/checkuser", methods=["POST"])
+def check_user():
+    username = request.form["username"]
+    password = request.form["password"]
+    if username not in users or users[username].password != password:
+      return "Username or Password is invalid"
+    return "successfully logged in"
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=3000)
