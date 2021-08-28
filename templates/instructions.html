@@ -1,30 +1,36 @@
 {% extends "base.html" %}
 
+{% block head %}
+
+  <style>
+    .paragraph{
+      text-align: center;
+      padding-left: 10%;
+      padding-right: 10%;
+    }
+
+    .instructions{
+      margin-top: 40px;
+    }
+  </style>
+
+{% endblock %}
+
 {% block body %}
 <!-- code goes here -->
 
+<h1 class="w3-center w3-padding-64 instructions">Instructions</h1>
 
-
-<div class="w3-row-padding w3-padding-64 w3-container">
-  <div class="w3-content">
-    <div class="w3-twothird">
-      <h3 class="w3-padding-32">Hello! Welcome to Learnera! On this platform users can create lessons using our wide array of tools. Lessons are public and can viewed by anyone, however only the owner can edit their own lessons. There are 4 tools available for creating lessons, these include term/definitions, fill in the blanks, multiple choice, and math format. Upon clicking 'Access Tools' you will be able to select which tool you would like to use for your purposes.
-      </h3>
-
-    </div>
+  <div class="w3-content paragraph">
+    <h5 class="w3-padding-32"> Hello! Welcome to StudyΣra! StudyΣra is a classroom-assist tool focused on helping students learn through quizzing. On this platform users can create lessons using our wide array of tools. Anyone can create a lesson and add questions to the lesson. Lessons are public and can be viewed by anyone, however only the owner can edit their own lessons. There are 4 tools available for creating lessons, these include term/definitions, fill in the blanks, multiple choice, and math format. Upon clicking 'Access Tools' you will be able to select which tool you would like to use for your purposes.
 
   </div>
-</div>
 
 <div class="w3-row-padding w3-light-grey w3-padding-64 w3-container">
-  <div class="w3-content">
-
-    <div class="w3-twothird">
-      <h3>
-       Lessons can be combined to create courses.
-      </h3>
-
-    </div>
+  <div class="w3-content paragraph">
+      <h5>
+       On the home page you can click login to view your profile. There is a search bar at the top to discover lessons and courses. After logging in, you can go into your account and see your lessons and courses.
+      </h5>
   </div>
 </div>
 

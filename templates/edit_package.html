@@ -32,8 +32,10 @@
       </div>
       <div id="blanks" class="w3-hide">
         <textarea id="blank-question" class="question">Mark locations for answers with exactly 4 underscores: ____</textarea><br>
-        <label for="answer-1">Answer 1</label>
-        <input id="answer-1" type="text" class="w3-input">
+        <div id="blanks-answers">
+          <label for="answer-1">Answer 1</label>
+          <input id="answer-1" type="text" class="w3-input">
+        </div>
       </div>
       <div id="mc" class="w3-hide">
         <label for="question">Question</label><br>
@@ -75,6 +77,21 @@ function onBlankQuestionChange(event) {
   const textarea = event.target;
   const currentQuestion = textarea.value;
   const blanks = getAllIndices(currentQuestion, "____");
+  const blankAnswers = document.getElementById("blanks-answers");
+
+  if (blanks.length === (currentNumBlanks - 1)) {
+    blanksAnswers.removeChild(blankAnswers.lastChild);
+  } else if (blanks.length === (currentNumBlanks + 1)) {
+    const newAnswerLabel = document.createElement("label");
+    newAnswerLabel.htmlFor = `answer-${blanks.length}`;
+    const newAnswerField = document.createElement("input");
+    newAnswerField.type = "text";
+    newAnswerField.className = "w3-input";
+    newAnswerField.id = `answer-${blanks.length}`;
+  } else {
+    // this shouldn't happen
+    console.log("Something unexpected happened")
+  }
 }
 
 const chooseQuestion = document.getElementById("type");

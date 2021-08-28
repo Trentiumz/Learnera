@@ -1,7 +1,7 @@
 from flask import Flask
 from flask import render_template, redirect, abort
 from flask import request
-from models import User, MultipleChoice, TermQuestion, Lesson, Course, Question
+from models import User, Package, Page
 from tools import next_id
 import urllib
 import json
@@ -9,8 +9,7 @@ import json
 app = Flask(__name__, template_folder="./templates", static_folder="./static")
 
 users = {}  # { username: User }
-lessons = {}  # { lesson_id: Lesson }
-courses = {}  # { course_id: Course }
+packages = {}  # { package_id: Package }
 
 
 @app.route("/")
@@ -38,17 +37,11 @@ def register():
     return render_template("register.html")
 
 
-@app.route("/practice", methods=["GET"])
-def practice():
-    if "lesson" in request.args and int(request.args["lesson"]) in lessons:
-        return render_template("practice.html",
-                               ids=json.dumps([int(request.args["lesson"])]))
-    elif "course" in request.args and int(lessons["course"]) in courses:
-        return render_template(
-            "practice.html",
-            ids=json.dumps([
-                lesson.id for lesson in courses[int(lessons["course"]).lessons]
-            ]))
+@app.route("/review", methods=["GET"])
+def review():
+    if "package" in request.args and int(request.args["package"]) in packages:
+        return render_template("review.html",
+                               id=int(request.args["package"]))
     else:
         abort(404)
 
@@ -66,10 +59,8 @@ def search():
                                message=f"Please enter a search term")
     # do some searching, probably accepting GET/POST params
     results = [
-        Lesson("Addition", User("User 3", "qwerty"), [], 0),
-        Course("Grade 9 Biology", User("User 5", "password123"), [], 1),
-        Course("Grade 2 Math", User("User 9", "agoodpassword"), [], 2),
-        Lesson("Logarithms", User("User 10", "qwertyuiop"), [], 3)
+        Package("Addition", User("User 3", "qwerty"), [], 0),
+        Package("Logarithms", User("User 10", "qwertyuiop"), [], 3)
     ]  # example results
     return render_template("search.html",
                            query=query,
@@ -78,70 +69,69 @@ def search():
 
 
 # TEMPORARY, JUST FOR MAKING FRONT END
-@app.route("/editlesson")
-def edit_lesson():
-    return render_template("edit_lesson.html")
+@app.route("/editpackage")
+def edit_package():
+    return render_template("edit_package.html")
 
 
-@app.route("/lesson/<id>")
-def lesson_details(id=None):
-    if id in lessons:
-        lesson = lessons[id]
-        return render_template("lesson_details",
-                               name=lesson.name,
-                               author=lesson.made_by.username,
-                               questions=lesson.questions,
+@app.route("/package/<id>")
+def package_details(id=None):
+    if id in packages:
+        package = packages[id]
+        return render_template("package_details",
+                               name=package.name,
+                               author=package.made_by.username,
+                               pages=package.pages,
                                id=id)
     abort(404)
 
 
-@app.route("/api/lesson_details")
-def get_lesson():
+@app.route("/api/package_details")
+def get_package():
     id = request.args.get("id")
-    if id in lessons:
-        lesson = lessons[id]
+    if id in packages:
+        package = packages[id]
         return json.dumps({
-            "name": lesson.name,
-            "author": lesson.made_by.username,
-            "questions": json.dumps(lesson.questions)
+            "name": package.name,
+            "author": package.made_by.username,
+            "pages": json.dumps(package.pages)
         })
     return ""
 
 
-@app.route("/api/question_list", methods=["POST"])
-def get_question_list():
-    print(request.form["ids"])
-    ids = json.loads(request.form["ids"])
-    question_list = []
-    for id in ids:
-        if id in lessons:
-            lesson = lessons[id]
-            for question in lesson.questions:
-                question_list.append(question)
+@app.route("/api/content_list", methods=["POST"])
+def get_content_list():
+    id = int(request.form["id"])
+    page_list = []
+    if id in packages:
+        package = packages[id]
+        print(package.pages)
+        for page in package.pages:
+            page_list.append(page)
     return json.dumps([{
-      "question_type": question.question_type,
-      "args": question.args
-    } for question in question_list])
+      "type": page.type,
+      "args": page.args
+    } for page in page_list])
 
 
-@app.route("/api/create/lesson", methods=["POST"])
-def create_lesson():
+@app.route("/api/create/package", methods=["POST"])
+def create_package():
     username = request.form["username"]
     password = request.form["password"]
     if username in users and users[username].password == password:
         name = request.form["name"]
-        questions = json.loads(request.form["questions"])
-        questions_parsed = []
-        for question in questions:
-            # question = { type: ..., args: ...}
-            questions_parsed.append(
-                Question(question["type"], question["args"]))
-        create_new_lesson(name, users[username], questions_parsed)
+        pages = json.loads(request.form["pages"])
+        pages_parsed = []
+        for page in pages:
+            # page = { type: ..., args: ...}
+            pages_parsed.append(
+                Page(page["type"], page["args"]))
+        create_new_package(name, users[username], pages_parsed)
 
 
-def create_new_lesson(name, user: User, questions: list):
-    id = next_id(Lesson, lessons)
-    lessons[id] = Lesson(name, user, questions, id)
+def create_new_package(name, user: User, pages: list):
+    id = next_id(Package, packages)
+    packages[id] = Package(name, user, pages, id)
 
 
 @app.route("/api/create/user", methods=["POST"])
@@ -181,14 +171,32 @@ def api_check_user():
         return "false"
     return "true"
 
+@app.route("/aboutus")
+def aboutus():
+  return render_template("aboutus.html")
 
 if __name__ == "__main__":
     users["tester"] = User("tester", "password")
-    create_new_lesson(
+    create_new_package(
         "sample", users["tester"],
-        [Question("term", {
-            "question_text": "who is I",
-            "answer": "myself"
+        [Page("content", {
+            "file": "http://www.africau.edu/images/default/sample.pdf"
+        }),
+        Page("questions", {"questions": [
+          {
+            "type": "mc",
+            "question_text": "Who is my favourite food eating guinea pig",
+            "choices": ["bobby", "tommy", "alex"],
+            "correct_choice": "bobby"
+          },
+          {
+            "type": "term",
+            "question_text": "There once was a giant big bird called: ",
+            "answer": "fred"
+          }
+        ]}),
+        Page("content", {
+          "file": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
         })])
-    print(lessons)
+    print(packages)
     app.run(host="0.0.0.0", port=3000)

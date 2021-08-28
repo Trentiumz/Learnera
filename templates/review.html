@@ -1,0 +1,82 @@
+{% extends "base.html" %} {% block title %}<title>Practice</title>{% endblock %} {% block head %}
+
+<script src="static/review/main.js">
+
+</script>
+
+<link rel="stylesheet" href="static/review/style.css" type="text/css" />
+<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous">
+
+</script>
+
+<script>
+	$(function(){
+    console.log({{id}})
+  $.post("/api/content_list", {
+    id: "{{id}}"
+  }, function(data, status){
+    pages = JSON.parse(data)
+    start()
+  })
+})
+
+</script>
+
+{% endblock %} {% block body %}
+
+<table id="container">
+	<tr>
+		<td id="leftPanel">
+			<p id="totalPages">15 pages total</p>
+			<p id="currentPage">Page 1</p>
+		</td>
+		<td id="rightPanel">
+			<button class="pageButton" id="prevButton">Prev</button>
+			<button class="pageButton" id="nextButton">Next</button>
+    </td>
+  </tr>
+</table>
+
+<template id="question_card_template">
+  
+</template>
+
+<template id="mc_template">
+  <div class="cardOuter">
+    <div class="cardInner">
+      <p class="question_description">The MC is a very cool person, who is the mc like?</p>
+      <div class="choice_list">
+      </div>
+    </div>
+    <div class="preAnswer">
+      <button class="responseButton quitButton">Give Up</button>
+    </div>
+    <div class="postAnswer" hidden>
+      <p class="result"></p>
+    </div>
+  </div>
+</template>
+
+<template id="mc_choice">
+  <button class="mc_choice">
+    Sample Choice
+  </button>
+</template>
+
+<template id="term_template">
+  <div class="cardOuter">
+    <div class="cardInner">
+      <p class="question_description">The term is super epic, what is the term for this epic term?</p>
+      <input type="text" class="term_answer" placeholder="Enter the term: "></input>
+    </div>
+    <div class="preAnswer">
+      <button class="responseButton quitButton">Give Up</button>
+      <button class="responseButton submitButton">Submit</button>
+    </div>
+    <div class="postAnswer" hidden>
+      <p class="result"></p>
+    </div>
+  </div>
+</template>
+
+{% endblock %}

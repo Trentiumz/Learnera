@@ -1,46 +1,65 @@
-class Question():
-    def __init__(self, question_type: str, args):
-        self.question_type = question_type
+"""
+Page: 
+
+type: content
+args: {file: [link to pdf file]}
+
+type: questions
+args: {questions: [
+  list of Questions
+]}
+
+Question: stored as a dict
+
+type: mc
+args: {question_text: text for the question, 
+      choices: [list of strings for each choice],
+      correct_choice: string of correct choice}
+
+type: term
+args: {question_text: text for the question,
+      answer: the correct term/word to input}
+
+"""
+
+class Page():
+    def __init__(self, type: str, args):
+        self.type = type
         self.args = args
 
-class Lesson:
+class Package:
     new_index = 1
 
-    def __init__(self, name, made_by, questions, id):
+    def __init__(self, name, made_by, pages, id):
         self.name = name
         self.made_by = made_by
-        self.questions = questions
+        self.pages = pages
         self.id = id
 
-    def add_question(self, question: Question):
-        self.questions.append(question)
+    def add_page(self, question: Page):
+        self.pages.append(question)
 
-
-class Course:
-    new_index = 1
-
-    def __init__(self, name, made_by, lessons, id):
-        self.name = name
-        self.made_by = made_by
-        self.lessons = lessons
-        self.id = id
-
-    def add_lesson(self, lesson: Lesson):
-        self.lessons.append(lesson)
-
+class Room:
+  new_index = 1
+  def __init__(self, name: str, owner):
+    self.name = name
+    self.owner = owner
+    self.packages = []
+  def add_package(self, package: Package):
+    self.packages.append(package)
 
 class User:
     def __init__(self, username, password):
         self.username = username
         self.password = password
-        self.courses = []
+        self.rooms = []
         self.lessons = []
 
-    def add_lesson(self, lesson: Lesson):
+    def add_lesson(self, lesson: Package):
         self.lessons.append(lesson)
 
-    def add_course(self, course: Course):
-        self.courses.append(course)
+    def add_room(self, course: Room):
+        self.rooms.append(course)
 
     def __str__(self):
         return self.username
