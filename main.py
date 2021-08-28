@@ -3,6 +3,7 @@ from flask import render_template
 from flask import request
 from models import User, MultipleChoice, TermQuestion, Lesson, Course, Question
 from tools import next_id
+import json
 
 app = Flask(__name__, template_folder="./templates", static_folder="./static")
 
@@ -30,20 +31,27 @@ def register():
 def practice():
     return render_template("practice.html")
 
+@app.route("/search")
+def search():
+    # do some searching, probably accepting GET/POST params
+    return render_template("search.html")
 
-@app.route("/api/create/lesson")
+@app.route("/api/create/lesson", methods=["POST"])
 def create_lesson():
-    pass
+    username = request.form["username"]
+    password = request.form["password"]
+    if username in users and users[username].password == password:
+      name = request.form["name"]
+      questions = json.loads(request.form["questions"])
+      questions_parsed = []
+      for question in questions:
+        # question = { type: ..., args: ...}
+        questions_parsed.append(Question(question["type"], question["args"]))
+      create_new_lesson(name, users[username], questions_parsed)
 
-
-def create_new_lesson(name, user, questions: list):
+def create_new_lesson(name, user: User, questions: list):
     id = next_id(Lesson, lessons)
     lessons[id] = Lesson(name, user, questions, id)
-
-
-@app.route("/api/create/question")
-def create_question():
-    pass
 
 
 @app.route("/api/create/user", methods=["POST"])
