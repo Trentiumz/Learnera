@@ -1,81 +1,80 @@
-{% extends "base.html" %} 
+{% extends "base.html" %}
 
-{% block title %} <title>Learnera: Practice</title> {% endblock %} 
+{% block title %}<title>Practice</title>{% endblock %}
 
 {% block head %}
 
-<style>
-	.main {
-		margin-top: 50px
-	}
-</style>
+<script src="static/practice/main.js"></script>
+
+<link rel="stylesheet" href="static/practice/style.css" type="text/css"/>
+<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+
+<script>
+$(function(){
+  $.post("/api/question_list", {
+    ids: "{{ids}}"
+  }, function(data, status){
+    questions = JSON.parse(data)
+    start()
+  })
+})
+</script>
 
 {% endblock %}
 
 {% block body %}
-<div class="w3-container main">
-  <h1>Practice</h1>
 
-  <a href="#" class="w3-button w3-blue w3-margin-right">Create Course</a>
-  <a href="#" class="w3-button w3-blue">Create Lesson</a>
+<table id="container">
+  <tr>
+    <td id="leftPanel">
+      <p id="totalQuestions">15 questions</p>
+      <p id="completedQuestions">12 questions done</p>
+    </td>
+    <td id="questionPanel">
+      <div id="cardOuter">
+        <div id="cardInner">
+          <div id="term_container">
+            <h1 class="question_title">Sample Title</h1>
+            <p id="question_description">The term is super epic, what is the term for this epic term?</p>
+            <input type="text" id="term_answer" placeholder="Enter the term: "></input>
+          </div>
+        </div>
+      </div>
+      <button id="nextButton">Next</button>
+    </td>
+  </tr>
+</table>
 
-  <div class="w3-container w3-margin-top">
-    <h3>My Courses</h3>
-    <div class="w3-row">
-      <div class="w3-third">
-        <div class="w3-card w3-container w3-margin">
-          <h4>Course 1</h4>
-          <p>Some description</p>
-        </div>
-      </div>
-      <div class="w3-third">
-        <div class="w3-card w3-container w3-margin">
-          <h4>Course 2</h4>
-          <p>Some description</p>
-        </div>
-      </div>
-      <div class="w3-third">
-        <div class="w3-card w3-container w3-margin">
-          <h4>Course 3</h4>
-          <p>Some description</p>
-        </div>
-      </div>
-      <div class="w3-third">
-        <div class="w3-card w3-container w3-margin">
-          <h4>Course 4</h4>
-          <p>Some description</p>
-        </div>
-      </div>
+<template id="mc_template">
+  <div id="mc_container">
+    <h1 class="question_title">Sample Title</h1>
+    <p id="question_description">The MC is a very cool person, who is the mc like?</p>
+    <div id="choice_list">
+      <button class="mc_choice">
+        Sample Choice
+      </button>
+      <button class="mc_choice">
+        Sample Choice
+      </button>
+      <button class="mc_choice">
+        Sample Choice
+      </button>
     </div>
   </div>
-  <div class="w3-container">
-    <h3>My Lessons</h3>
-    <div class="w3-row">
-      <div class="w3-third">
-        <div class="w3-card w3-container w3-margin">
-          <h4>Lesson 1</h4>
-          <p>Some description</p>
-        </div>
-      </div>
-      <div class="w3-third">
-        <div class="w3-card w3-container w3-margin">
-          <h4>Lesson 2</h4>
-          <p>Some description</p>
-        </div>
-      </div>
-      <div class="w3-third">
-        <div class="w3-card w3-container w3-margin">
-          <h4>Lesson 3</h4>
-          <p>Some description</p>
-        </div>
-      </div>
-      <div class="w3-third">
-        <div class="w3-card w3-container w3-margin">
-          <h4>Lesson 4</h4>
-          <p>Some description</p>
-        </div>
-      </div>
-    </div>
+</template>
+
+<template id="mc_choice">
+  <button class="mc_choice">
+    Sample Choice
+  </button>
+</template>
+
+<template id="term_template">
+  <div id="term_container">
+    <h1 class="question_title">Sample Title</h1>
+    <p id="question_description">The term is super epic, what is the term for this epic term?</p>
+    <input type="text" placeholder="Enter the term: "></input>
   </div>
-</div>
+</template>
+
 {% endblock %}

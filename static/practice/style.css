@@ -1,0 +1,90 @@
+#container{
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  background-color: #dddddd;
+}
+
+#container #leftPanel{
+  width: 20%;
+  background-color: #5463FF;
+  text-align: center;
+  font-weight: bolder;
+  color: white;
+}
+
+#innerContainer{
+  padding: 20px;
+}
+
+#cardOuter{
+  padding: 50px;
+  background-color: #5463FF;
+  margin: 10%;
+  border-radius: 60px;
+}
+
+#cardInner{
+  padding: 20px;
+  background-color: white;
+  text-align: center;
+  border-radius: 40px;
+}
+
+#cardInner h1{
+  font-weight: bolder;
+}
+
+#cardInner #question_description{
+  margin: 30px;
+}
+
+#mc_container .mc_choice{
+  margin: 5px;
+  padding: 5px;
+  background-color: #2776F6;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  transition-duration: 0.3s;
+}
+
+#mc_container .mc_choice:hover{
+  background-color: #629BF6;
+}
+
+#term_container #term_answer{
+  background-color: #dddddd;
+  padding: 5px;
+  border-radius: 10px;
+  border-color: white;
+  transition-duration: 0.3s;
+}
+
+#term_container #term_answer:focus{
+  outline: none;
+  background-color: #eeeeee;
+}
+
+#nextButton{
+  right: 0%;
+  position: absolute;
+  border-radius: 10px;
+  background-color: #444FC8;
+  color: white;
+  padding-right: 20px;
+  padding-left: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin-right: 10%;
+  border-color: #6A8FF6;
+  font-weight: bolder;
+  box-shadow: 3px 3px #27C9F6;
+  transition-duration: 0.3s;
+}
+
+#nextButton:hover{
+  background-color: lightblue;
+  box-shadow: 3px 3px #275EF6;
+  color: black;
+}

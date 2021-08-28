@@ -17,9 +17,11 @@ courses = {}  # { course_id: Course }
 def index():
     return render_template("index.html")
 
+
 @app.route("/instructions")
 def instructions():
-  return render_template("instructions.html")
+    return render_template("instructions.html")
+
 
 @app.route("/login")
 def login():
@@ -36,8 +38,23 @@ def register():
     return render_template("register.html")
 
 
-@app.route("/account")
+@app.route("/practice", methods=["GET"])
 def practice():
+    if "lesson" in request.args and int(request.args["lesson"]) in lessons:
+        return render_template("practice.html",
+                               ids=json.dumps([int(request.args["lesson"])]))
+    elif "course" in request.args and int(lessons["course"]) in courses:
+        return render_template(
+            "practice.html",
+            ids=json.dumps([
+                lesson.id for lesson in courses[int(lessons["course"]).lessons]
+            ]))
+    else:
+        abort(404)
+
+
+@app.route("/account")
+def account():
     return render_template("account.html")
 
 
@@ -45,13 +62,14 @@ def practice():
 def search():
     query = request.args.get("query")
     if query is None or query == "":
-        return render_template("error.html", message=f"Please enter a search term")
+        return render_template("error.html",
+                               message=f"Please enter a search term")
     # do some searching, probably accepting GET/POST params
     results = [
-        Lesson("Addition", "User 2", [], 0),
-        Course("Grade 9 Biology", "User 5", [], 1),
-        Course("Grade 2 Math", "User 9", [], 2),
-        Lesson("Logarithms", "User 10", [], 3)
+        Lesson("Addition", User("User 3", "qwerty"), [], 0),
+        Course("Grade 9 Biology", User("User 5", "password123"), [], 1),
+        Course("Grade 2 Math", User("User 9", "agoodpassword"), [], 2),
+        Lesson("Logarithms", User("User 10", "qwertyuiop"), [], 3)
     ]  # example results
     return render_template("search.html",
                            query=query,
@@ -59,13 +77,23 @@ def search():
                            type_=type)
 
 
+# TEMPORARY, JUST FOR MAKING FRONT END
+@app.route("/editlesson")
+def edit_lesson():
+    return render_template("edit_lesson.html")
+
+
 @app.route("/lesson/<id>")
 def lesson_details(id=None):
-  if id in lessons:
-    lesson = lessons[id]
-    return render_template("lesson_details", name=lesson.name, author=lesson.made_by.username, questions=lesson.questions)
-  abort(404)
-  
+    if id in lessons:
+        lesson = lessons[id]
+        return render_template("lesson_details",
+                               name=lesson.name,
+                               author=lesson.made_by.username,
+                               questions=lesson.questions,
+                               id=id)
+    abort(404)
+
 
 @app.route("/api/lesson_details")
 def get_lesson():
@@ -73,14 +101,27 @@ def get_lesson():
     if id in lessons:
         lesson = lessons[id]
         return json.dumps({
-            "name":
-            lesson.name,
-            "author":
-            lesson.made_by.username,
-            "questions":
-            json.dumps(lesson.questions)
+            "name": lesson.name,
+            "author": lesson.made_by.username,
+            "questions": json.dumps(lesson.questions)
         })
     return ""
+
+
+@app.route("/api/question_list", methods=["POST"])
+def get_question_list():
+    print(request.form["ids"])
+    ids = json.loads(request.form["ids"])
+    question_list = []
+    for id in ids:
+        if id in lessons:
+            lesson = lessons[id]
+            for question in lesson.questions:
+                question_list.append(question)
+    return json.dumps([{
+      "question_type": question.question_type,
+      "args": question.args
+    } for question in question_list])
 
 
 @app.route("/api/create/lesson", methods=["POST"])
@@ -142,4 +183,12 @@ def api_check_user():
 
 
 if __name__ == "__main__":
+    users["tester"] = User("tester", "password")
+    create_new_lesson(
+        "sample", users["tester"],
+        [Question("term", {
+            "question_text": "who is I",
+            "answer": "myself"
+        })])
+    print(lessons)
     app.run(host="0.0.0.0", port=3000)

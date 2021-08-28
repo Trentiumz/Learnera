@@ -1,0 +1,84 @@
+{% extends "base.html" %} 
+
+{% block title %}
+<title>Search Results</title>
+{% endblock %}
+
+{% block head %}
+<style>
+  .main {margin-top: 50px;}
+  .question {width: 80%;height:75px;}
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="w3-container main">
+  <h1>Lesson 1</h1>
+  <form>
+    <div class="w3-card w3-container">
+      <h4>Question 1</h4>
+      <label for="type">Type of Question:</label>
+      <select class="w3-select" id="type" name="type">
+        <option value="td">Term/Definition</option>
+        <option value="blanks">Fill in the Blanks</option>
+        <option value="mc">Multiple Choice</option>
+        <option value="math">Math</option>
+      </select>
+      <div id="td" class>
+        <label for="term">Term</label>
+        <input id="term" type="text" class="w3-input">
+        <label>Definition</label>
+        <input type="text" class="w3-input">
+      </div>
+      <div id="blanks" class="w3-hide">
+        <textarea id="blank-question" class="question">Mark locations for answers with exactly 4 underscores: ____</textarea><br>
+        <label for="answer-1">Answer 1</label>
+        <input id="answer-1" type="text" class="w3-input">
+      </div>
+      <div id="mc" class="w3-hide">
+        <label for="question">Question</label><br>
+        <textarea id="question" class="question">Question goes here</textarea><br>
+        <label for="option-1">Option 1</label>
+        <input id="option-1" type="text" class="w3-input">
+        <label for="option-2">Option 2</label>
+        <input id="option-2" type="text" class="w3-input">
+      </div>
+      <div id="math" class="w3-hide">
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+let currentType = "td";
+let currentNumBlanks = 1;
+
+function onChangeQuestion(event) {
+  const dropdown = event.target;
+  const newType = dropdown.value;
+
+  document.getElementById(currentType).classList.add("w3-hide");
+  document.getElementById(newType).classList.remove("w3-hide");
+
+  currentType = newType;
+}
+
+function getAllIndices(arr, val) {
+    var indices = [], i = -4;
+    while ((i = arr.indexOf(val, i+4)) != -1){
+        indices.push(i);
+    }
+    return indices;
+}
+
+function onBlankQuestionChange(event) {
+  const textarea = event.target;
+  const currentQuestion = textarea.value;
+  const blanks = getAllIndices(currentQuestion, "____");
+}
+
+const chooseQuestion = document.getElementById("type");
+chooseQuestion.addEventListener("change", onChangeQuestion)
+
+</script>
+{% endblock %}
