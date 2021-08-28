@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %} <title> {{name}} Details </title> {% endblock %}
+
+{% block body %}
+
+<h1>{{name}} details</h1>
+
+<p>Made by: {{author}}</p>
+
+{% for question in questions %}
+  <p>{{question.question_text}}</p>
+{% endfor %}
+
+{% endblock %}

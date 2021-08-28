@@ -22,7 +22,10 @@
 <div class="w3-container login">
 	<div class="w3-card w3-container login-card">
 		<h1>Log In</h1>
-		<form class="w3-container w3-margin-bottom" action="/api/checkuser" method="post">
+    {% if message %}
+      <p>{{ message }}</p>
+    {% endif %}
+		<form class="w3-container w3-margin-bottom" action="/checkuser" method="post">
 			<label for="username">Username</label>
         <input class="w3-input" type="text" id="username" name="username">
         <label for="password">Password</label>

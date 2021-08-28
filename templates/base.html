@@ -2,37 +2,44 @@
 <html lang="en">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<head> 
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
-<style>
-	body,
-	h1,
-	h2,
-	h3,
-	h4,
-	h5,
-	h6 {
-		font-family: "Lato", sans-serif
-	}
 
-	.w3-bar,
-	h1,
-	button {
-		font-family: "Montserrat", sans-serif
-	}
+<head>
+	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous">
 
-	.fa-anchor,
-	.fa-coffee {
-		font-size: 200px
-	}
-</style>
-{% block head %} {% endblock %}
-<script>
-	// Used to toggle the menu on small screens when clicking on the menu button
+	</script>
+	<style>
+		body,
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6 {
+			font-family: "Lato", sans-serif
+		}
+
+		.w3-bar,
+		h1,
+		button {
+			font-family: "Montserrat", sans-serif
+		}
+
+		.fa-anchor,
+		.fa-coffee {
+			font-size: 200px
+		}
+
+		.search {
+			width: min(300px, 45%) !important
+		}
+	</style>
+	{% block head %} {% endblock %}
+	<script>
+		// Used to toggle the menu on small screens when clicking on the menu button
 function myFunction() {
   var x = document.getElementById("navDemo");
   if (x.className.indexOf("w3-show") == -1) {
@@ -67,12 +74,20 @@ $(function(){
     let username = getCookie("username")
     let password = getCookie("password")
     
-    $(".w3-top")[0].innerHTML += '<a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" id="loginButton" hidden>Account</a>'
-    $("#navDemo")[0].innerHTML += '<a href="#" class="w3-bar-item w3-button w3-padding-large">Account</a>'
+    $.post("/api/checkuser", {
+      username: username,
+      password: password,
+    }, function(data, status){
+      if(data === "true"){
+        $(".accountButton").css("display", "")
+      }else{
+        document.setCookie("username", "")
+        document.setCookie("password", "")
+      }
+    })
   }
 })
-
-</script>
+	</script>
 
 </head>
 
@@ -87,8 +102,13 @@ $(function(){
     <a href="/" class="w3-bar-item w3-button w3-padding-large w3-white w3-hide-medium w3-hide-small">Home</a>
     <a href="/" class="w3-bar-item w3-button w3-padding-large w3-white w3-hide-large"><i class="fa fa-home"></i></a>
     <a href="#" class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-padding-large w3-hover-white">About Us</a>
-    <a href="#" class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-padding-large w3-hover-white">Instructions</a>
-    <input type="text" class="w3-bar-item w3-input w3-padding-large w3-right" placeholder="Search...">
+
+    <a href="/instructions" class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-padding-large w3-hover-white">Instructions</a>
+    
+    <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white accountButton" style="display: none">Account</a>
+    <form action="/search">
+      <input type="text" class="w3-bar-item w3-input w3-padding-large w3-right search" name="query" method="get" type="text" placeholder="Search...">
+    </form>
     <!--- <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">test</a>
     <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">test</a> --->
   </div>
@@ -97,6 +117,7 @@ $(function(){
   <div id="navDemo" class="w3-bar-block w3-white w3-hide w3-hide-large w3-large">
     <a href="#" class="w3-bar-item w3-button w3-padding-large">About Us</a>
     <a href="#" class="w3-bar-item w3-button w3-padding-large">Instructions</a>
+    <a href="#" class="w3-bar-item w3-button w3-padding-large accountButton" style="display: none">Account</a>
     <!--- <a href="#" class="w3-bar-item w3-button w3-padding-large">test</a>
     <a href="#" class="w3-bar-item w3-button w3-padding-large">test</a> --->
   </div>

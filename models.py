@@ -4,6 +4,7 @@ class Question:
         self.args = args
 
 
+# MIGHT ACTUALLY BE KINDA USELESS
 class MultipleChoice(Question):
     def __init__(self, question_text: str, options):
         super().__init__("mc", {
@@ -18,6 +19,7 @@ class TermQuestion(Question):
             "question_text": question_text,
             "answer": answer
         })
+# END USELESS CODE
 
 
 class Lesson:

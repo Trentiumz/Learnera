@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %} <title>Login Success</title> {% endblock %}
+
+{% block head %}
+<script>
+  $(function(){
+    setCookie("username", "{{username}}")
+    setCookie("password", "{{password}}")
+    window.location.replace("/")
+  })
+</script>
+{% endblock %}
+
+{% block body %}
+  <h1>Login Success</h1>
+{% endblock %}

@@ -13,18 +13,12 @@
 {% block body %}
 <div class="w3-container main">
   <h1>Search</h1>
-  <p>Results for your search "science"</p>
-  <div class="w3-card w3-container w3-margin-bottom">
-    <h3>Course 3</h3>
-    <p>Some description</p>
+  <p>Results for your search "{{query}}"</p>
+  {% for result in results %}
+  <div class="w3-card w3-container w3-margin-bottom {{'w3-pale-blue' if type_(result).__name__ == 'Lesson' else 'w3-pale-green'}}">
+    <h3>{{result.name}}</h3>
+    <p>{{type_(result).__name__}} made by <strong>{{result.made_by.username}}</strong></p>
   </div>
-  <div class="w3-card w3-container w3-margin-bottom">
-    <h3>Course 10</h3>
-    <p>Some description</p>
-  </div>
-  <div class="w3-card w3-container w3-margin-bottom">
-    <h3>Lesson 1</h3>
-    <p>Some description</p>
-  </div>
+  {% endfor %}
 </div>
 {% endblock %}
