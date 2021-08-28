@@ -79,7 +79,8 @@ $(function(){
       password: password,
     }, function(data, status){
       if(data === "true"){
-        $(".accountButton").css("display", "")
+        $(".accountButton").show()
+        $(".accountButton").attr("href", "/account/" + username)
       }else{
         setCookie("username", "")
         setCookie("password", "")

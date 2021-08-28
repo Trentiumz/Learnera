@@ -40,15 +40,16 @@ def register():
 @app.route("/review", methods=["GET"])
 def review():
     if "package" in request.args and int(request.args["package"]) in packages:
-        return render_template("review.html",
-                               id=int(request.args["package"]))
+        return render_template("review.html", id=int(request.args["package"]))
     else:
         abort(404)
 
 
-@app.route("/account")
-def account():
-    return render_template("account.html")
+@app.route("/account/<username>")
+def account(username):
+    if username in users:
+      return render_template("account.html", packages=users[username].packages)
+    abort(404)
 
 
 @app.route("/search")
@@ -76,9 +77,10 @@ def edit_package():
 
 @app.route("/package/<id>")
 def package_details(id=None):
+    id = int(id)
     if id in packages:
         package = packages[id]
-        return render_template("package_details",
+        return render_template("package_details.html",
                                name=package.name,
                                author=package.made_by.username,
                                pages=package.pages,
@@ -105,12 +107,11 @@ def get_content_list():
     page_list = []
     if id in packages:
         package = packages[id]
-        print(package.pages)
         for page in package.pages:
             page_list.append(page)
     return json.dumps([{
-      "type": page.type,
-      "args": page.args
+        "type": page.type,
+        "args": page.args
     } for page in page_list])
 
 
@@ -124,14 +125,14 @@ def create_package():
         pages_parsed = []
         for page in pages:
             # page = { type: ..., args: ...}
-            pages_parsed.append(
-                Page(page["type"], page["args"]))
+            pages_parsed.append(Page(page["type"], page["args"]))
         create_new_package(name, users[username], pages_parsed)
 
 
 def create_new_package(name, user: User, pages: list):
     id = next_id(Package, packages)
     packages[id] = Package(name, user, pages, id)
+    user.add_package(packages[id])
 
 
 @app.route("/api/create/user", methods=["POST"])
@@ -171,32 +172,37 @@ def api_check_user():
         return "false"
     return "true"
 
+
 @app.route("/aboutus")
 def aboutus():
-  return render_template("aboutus.html")
+    return render_template("aboutus.html")
+
 
 if __name__ == "__main__":
     users["tester"] = User("tester", "password")
-    create_new_package(
-        "sample", users["tester"],
-        [Page("content", {
-            "file": "http://www.africau.edu/images/default/sample.pdf"
-        }),
-        Page("questions", {"questions": [
-          {
-            "type": "mc",
-            "question_text": "Who is my favourite food eating guinea pig",
-            "choices": ["bobby", "tommy", "alex"],
-            "correct_choice": "bobby"
-          },
-          {
-            "type": "term",
-            "question_text": "There once was a giant big bird called: ",
-            "answer": "fred"
-          }
-        ]}),
-        Page("content", {
-          "file": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
-        })])
+    create_new_package("sample", users["tester"], [
+        Page("content",
+             {"file": "http://www.africau.edu/images/default/sample.pdf"}),
+        Page(
+            "questions", {
+                "questions": [{
+                    "type": "mc",
+                    "question_text":
+                    "Who is my favourite food eating guinea pig",
+                    "choices": ["bobby", "tommy", "alex"],
+                    "correct_choice": "bobby"
+                }, {
+                    "type": "term",
+                    "question_text":
+                    "There once was a giant big bird called: ",
+                    "answer": "fred"
+                }]
+            }),
+        Page(
+            "content", {
+                "file":
+                "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+            })
+    ])
     print(packages)
     app.run(host="0.0.0.0", port=3000)

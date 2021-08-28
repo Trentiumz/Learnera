@@ -53,10 +53,10 @@ class User:
         self.username = username
         self.password = password
         self.rooms = []
-        self.lessons = []
+        self.packages = []
 
-    def add_lesson(self, lesson: Package):
-        self.lessons.append(lesson)
+    def add_package(self, lesson: Package):
+        self.packages.append(lesson)
 
     def add_room(self, course: Room):
         self.rooms.append(course)

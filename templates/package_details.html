@@ -2,16 +2,44 @@
 
 {% block title %} <title> {{name}} Details </title> {% endblock %}
 
+{% block head %}
+<style>
+  #container{
+    margin-top: 50px;
+    text-align: center;
+  }
+
+  #title{
+    font-weight: bold;
+  }
+
+  #review{
+    padding: 20px;
+    background-color: #0FA0FF;
+    color: white;
+    box-shadow: 3px 3px grey;
+    border-color: black;
+    border-radius: 10px;
+    border-style: solid;
+    text-decoration: none;
+    transition-duration: 0.3s;
+  }
+
+  #review:hover{
+    color: black;
+    background-color: white;
+  }
+</style>
+{% endblock %}
+
 {% block body %}
 
-<h1>{{name}} details</h1>
+<div id="container">
+  <h1 id="title">"{{name}}" details</h1>
 
-<p>Made by: {{author}}</p>
+  <p>Made by: {{author}}</p><br>
 
-<a href="/review?package={{id}}">Review</a>
-
-{% for question in questions %}
-  <p>{{question.question_text}}</p>
-{% endfor %}
+  <a href="/review?package={{id}}" id="review">Review</a>
+</div>
 
 {% endblock %}
