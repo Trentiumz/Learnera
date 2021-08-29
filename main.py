@@ -171,7 +171,7 @@ def add_package_to_room(id):
   password = request.form["password"]
   package_id = int(request.form["package"])
   if id in rooms:
-    if username in users and users[username].password == password and rooms[id].owner == username and package_id in packages:
+    if username in users and users[username].password == password and rooms[id].owner == username and package_id in packages and package_id not in rooms[id].packages:
       rooms[id].add_package(package_id)
       return "done"
     else:
@@ -193,6 +193,7 @@ def api_create_room():
 def create_new_room(name, packages: list, owner: str):
   id = next_id(Room, rooms)
   rooms[id] = Room(id, name, owner, packages)
+  users[owner].invite_to_room(id)
   users[owner].join_room(id)
   return id
 

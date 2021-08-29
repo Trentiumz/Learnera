@@ -53,7 +53,8 @@ class Room:
         self.invited = [owner]
 
     def add_user(self, user: int):
-        self.invited.append(user)
+        if user not in self.invited:
+          self.invited.append(user)
 
     def add_package(self, package: int):
         self.packages.append(package)
