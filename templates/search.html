@@ -25,7 +25,7 @@
   {% for result in results %}
   <div class="w3-card w3-container w3-margin-bottom {{'w3-pale-blue' if type_(result).__name__ == 'Package' else 'w3-pale-green'}} card" onclick="window.location.assign('/package/{{result.id}}')">
     <h3>{{result.name}}</h3>
-    <p>{{type_(result).__name__}} made by <strong>{{result.made_by.username}}</strong></p>
+    <p>{{type_(result).__name__}} made by <strong>{{result.made_by}}</strong></p>
   </div>
   {% endfor %}
 </div>

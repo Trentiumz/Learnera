@@ -48,7 +48,7 @@ def review():
 @app.route("/account/<username>")
 def account(username):
     if username in users:
-      return render_template("account.html", packages=users[username].packages)
+      return render_template("account.html", packages=[packages[id] for id in users[username].packages])
     abort(404)
 
 
@@ -87,7 +87,7 @@ def package_details(id=None):
         package = packages[id]
         return render_template("package_details.html",
                                name=package.name,
-                               author=package.made_by.username,
+                               author=package.made_by,
                                pages=package.pages,
                                id=id)
     abort(404)
@@ -100,7 +100,7 @@ def get_package():
         package = packages[id]
         return json.dumps({
             "name": package.name,
-            "author": package.made_by.username,
+            "author": package.made_by,
             "pages": json.dumps(package.pages)
         })
     return ""
@@ -122,6 +122,7 @@ def get_content_list():
 
 @app.route("/api/create/package", methods=["POST"])
 def create_package():
+    print(request.form)
     username = request.form["username"]
     password = request.form["password"]
     if username in users and users[username].password == password:
@@ -132,12 +133,13 @@ def create_package():
             # page = { type: ..., args: ...}
             pages_parsed.append(Page(page["type"], page["args"]))
         create_new_package(name, users[username], pages_parsed)
+    return "Package created successfully"
 
 
 def create_new_package(name, user: User, pages: list):
     id = next_id(Package, packages)
-    packages[id] = Package(name, user, pages, id)
-    user.add_package(packages[id])
+    packages[id] = Package(name, user.username, pages, id)
+    user.add_package(id)
 
 
 @app.route("/api/create/user", methods=["POST"])

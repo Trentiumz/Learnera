@@ -30,7 +30,7 @@ class Page():
 class Package:
     new_index = 1
 
-    def __init__(self, name, made_by, pages, id):
+    def __init__(self, name, made_by: str, pages, id):
         self.name = name
         self.made_by = made_by
         self.pages = pages
@@ -45,21 +45,17 @@ class Room:
     self.name = name
     self.owner = owner
     self.users = users
-  def add_user(self, user):
+  def add_user(self, user: int):
     self.packages.append(user)
 
 class User:
     def __init__(self, username, password):
         self.username = username
         self.password = password
-        self.rooms = []
         self.packages = []
 
-    def add_package(self, lesson: Package):
+    def add_package(self, lesson: int):
         self.packages.append(lesson)
-
-    def add_room(self, course: Room):
-        self.rooms.append(course)
 
     def __str__(self):
         return self.username

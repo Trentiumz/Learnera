@@ -13,56 +13,232 @@
 
 {% block body %}
 <div class="w3-container main">
-  <h1>Lesson 1</h1>
-  <form>
-    <div class="w3-card w3-container">
-      <h4>Question 1</h4>
-      <label for="type">Type of Question:</label>
-      <select class="w3-select" id="type" name="type">
-        <option value="td">Term/Definition</option>
-        <option value="blanks">Fill in the Blanks</option>
-        <option value="mc">Multiple Choice</option>
-        <option value="math">Math</option>
+  <h1>New Package</h1>
+  <label>Package Name</label>
+  <input class="w3-input" id="package-name" type="text">
+  <div class="w3-margin-top" id="pages">
+    <div id="1" class="w3-card w3-container w3-padding">
+      <h3>Page 1</h3>
+
+      <label>Type of Page:</label>
+      <select class="w3-select page-type">
+        <option value="content">Notes</option>
+        <option value="questions">Questions</option>
       </select>
-      <div id="td" class>
-        <label for="term">Term</label>
-        <input id="term" type="text" class="w3-input">
-        <label>Definition</label>
-        <input type="text" class="w3-input">
-      </div>
-      <div id="blanks" class="w3-hide">
-        <textarea id="blank-question" class="question">Mark locations for answers with exactly 4 underscores: ____</textarea><br>
-        <div id="blanks-answers">
-          <label for="answer-1">Answer 1</label>
-          <input id="answer-1" type="text" class="w3-input">
+      <div>
+        <div class>
+          <label>URL for Notes</label>
+          <input class="w3-input" type="url">
+        </div>
+        <div class="w3-hide">
+          <button class="w3-button w3-black add-question">Add Question</button>
+          <div id="1-1" class="w3-card w3-container w3-margin w3-padding">
+            <h5>Question 1</h5>
+            <label for="type">Type of Question:</label>
+            <select class="w3-select question-type">
+              <option value="term">Term/Definition</option>
+              <option value="mc">Multiple Choice</option>
+            </select>
+            <div>
+              <div class>
+                <label>Term</label>
+                <input type="text" class="w3-input">
+                <label>Definition/Answer</label>
+                <input type="text" class="w3-input">
+              </div>
+              <div class="w3-hide">
+                <label>Question</label><br>
+                <textarea>Question goes here</textarea><br>
+                <label>Option 1</label>
+                <input type="text" class="w3-input">
+                <label>Option 2</label>
+                <input type="text" class="w3-input">
+                <label>Option 3</label>
+                <input type="text" class="w3-input">
+                <label>Option 4</label>
+                <input type="text" class="w3-input">
+                <label>Correct Choice</label>
+                <select class="w3-select">
+                  <option value="1">Option 1</option>
+                  <option value="2">Option 2</option>
+                  <option value="3">Option 3</option>
+                  <option value="4">Option 4</option>
+                </select>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div id="mc" class="w3-hide">
-        <label for="question">Question</label><br>
-        <textarea id="question" class="question">Question goes here</textarea><br>
-        <label for="option-1">Option 1</label>
-        <input id="option-1" type="text" class="w3-input">
-        <label for="option-2">Option 2</label>
-        <input id="option-2" type="text" class="w3-input">
-      </div>
-      <div id="math" class="w3-hide">
-      </div>
     </div>
-  </form>
+  </div>
+  <button id="add-page" class="w3-button w3-black">Add Page</button>
+  <button id="create-package" class="w3-button w3-green">Create Package</button>
 </div>
 
 <script>
-let currentType = "td";
-let currentNumBlanks = 1;
+const QUESTION_TYPES = ["term", "mc"];
+const PAGE_TYPES = ["content", "questions"];
 
-function onChangeQuestion(event) {
+let currentQuestionTypes = [["term"]];
+
+function onChangeQuestionType(event) {
   const dropdown = event.target;
+  const [pageId, questionId] = dropdown.parentElement.id.split("-");
+  const oldType = currentQuestionTypes[pageId - 1][questionId - 1]; // arrays start from 0
   const newType = dropdown.value;
 
-  document.getElementById(currentType).classList.add("w3-hide");
-  document.getElementById(newType).classList.remove("w3-hide");
+  const questionTypeInputs = dropdown.nextElementSibling.children;
+  //console.log(questionTypeInputs, oldType, newType);
+  questionTypeInputs[QUESTION_TYPES.indexOf(oldType)].classList.add("w3-hide");
+  questionTypeInputs[QUESTION_TYPES.indexOf(newType)].classList.remove("w3-hide");
 
-  currentType = newType;
+  currentQuestionTypes[pageId - 1][questionId - 1] = newType;
+}
+
+let currentPageTypes = ["content"];
+
+function onChangePageType(event) {
+  const dropdown = event.target;
+  const pageId = dropdown.parentElement.id;
+  const oldType = currentPageTypes[pageId - 1]; // arrays start from 0
+  const newType = dropdown.value;
+
+  const pageTypeInputs = dropdown.nextElementSibling.children;
+
+  pageTypeInputs[PAGE_TYPES.indexOf(oldType)].classList.add("w3-hide");
+  pageTypeInputs[PAGE_TYPES.indexOf(newType)].classList.remove("w3-hide");
+
+  currentPageTypes[pageId - 1] = newType;
+}
+
+function onAddQuestion(event) {
+  const pageId = event.target.parentElement.parentElement.parentElement.id;
+  currentQuestionTypes[pageId - 1].push("term");
+  const questionId = currentQuestionTypes[pageId - 1].length
+  
+  const question = document.createElement("div");
+  question.id = `${pageId}-${questionId}`;
+  question.className = "w3-card w3-container w3-margin w3-padding";
+  event.target.parentElement.appendChild(question);
+
+  question.innerHTML = `
+  <h5>Question ${questionId}</h5>
+  <label for="type">Type of Question:</label>
+  <select class="w3-select question-type">
+    <option value="term">Term/Definition</option>
+    <option value="mc">Multiple Choice</option>
+  </select>
+  <div>
+    <div class>
+      <label>Term</label>
+      <input type="text" class="w3-input">
+      <label>Definition/Answer</label>
+      <input type="text" class="w3-input">
+    </div>
+    <div class="w3-hide">
+      <label>Question</label><br>
+      <textarea>Question goes here</textarea><br>
+      <label>Option 1</label>
+      <input type="text" class="w3-input">
+      <label>Option 2</label>
+      <input type="text" class="w3-input">
+      <label>Option 3</label>
+      <input type="text" class="w3-input">
+      <label>Option 4</label>
+      <input type="text" class="w3-input">
+      <label>Correct Choice</label>
+      <select class="w3-select">
+        <option value="1">Option 1</option>
+        <option value="2">Option 2</option>
+        <option value="3">Option 3</option>
+        <option value="4">Option 4</option>
+      </select>
+    </div>
+  </div>`;
+
+  const chooseQuestionFields = question.getElementsByClassName("question-type");
+  for (const field of chooseQuestionFields) {
+    field.addEventListener("change", onChangeQuestionType);
+  }
+}
+
+function onAddPage(event) {
+  currentPageTypes.push("content");
+  currentQuestionTypes.push(["term"]);
+
+  const pageId = currentPageTypes.length;
+
+  const page = document.createElement("div");
+  page.id = pageId;
+  page.className = "w3-card w3-container w3-padding";
+  event.target.previousElementSibling.appendChild(page);
+
+  page.innerHTML = `
+  <h3>Page ${pageId}</h3>
+  <label>Type of Page:</label>
+  <select class="w3-select page-type">
+    <option value="content">Notes</option>
+    <option value="questions">Questions</option>
+  </select>
+  <div>
+    <div class>
+      <label>URL for Notes</label>
+      <input class="w3-input" type="url">
+    </div>
+    <div class="w3-hide">
+      <button class="w3-button w3-black add-question">Add Question</button>
+      <div id="${pageId}-1" class="w3-card w3-container w3-margin w3-padding">
+        <h5>Question 1</h5>
+        <label for="type">Type of Question:</label>
+        <select class="w3-select question-type">
+          <option value="term">Term/Definition</option>
+          <option value="mc">Multiple Choice</option>
+        </select>
+        <div>
+          <div class>
+            <label>Term</label>
+            <input type="text" class="w3-input">
+            <label>Definition/Answer</label>
+            <input type="text" class="w3-input">
+          </div>
+          <div class="w3-hide">
+            <label>Question</label><br>
+            <textarea>Question goes here</textarea><br>
+            <label>Option 1</label>
+            <input type="text" class="w3-input">
+            <label>Option 2</label>
+            <input type="text" class="w3-input">
+            <label>Option 3</label>
+            <input type="text" class="w3-input">
+            <label>Option 4</label>
+            <input type="text" class="w3-input">
+            <label>Correct Choice</label>
+            <select class="w3-select">
+              <option value="1">Option 1</option>
+              <option value="2">Option 2</option>
+              <option value="3">Option 3</option>
+              <option value="4">Option 4</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+
+  const chooseQuestionFields = document.getElementsByClassName("question-type");
+  for (const field of chooseQuestionFields) {
+    field.addEventListener("change", onChangeQuestionType);
+  }
+
+  const choosePageFields = document.getElementsByClassName("page-type");
+  for (const field of choosePageFields) {
+    field.addEventListener("change", onChangePageType);
+  }
+
+  const addQuestionButtons = document.getElementsByClassName("add-question");
+  for (const button of addQuestionButtons) {
+    button.addEventListener("click", onAddQuestion);
+  }
 }
 
 function getAllIndices(arr, val) {
@@ -73,32 +249,119 @@ function getAllIndices(arr, val) {
     return indices;
 }
 
-function onBlankQuestionChange(event) {
-  const textarea = event.target;
-  const currentQuestion = textarea.value;
-  const blanks = getAllIndices(currentQuestion, "____");
-  const blankAnswers = document.getElementById("blanks-answers");
-  console.log(blanks.length, currentNumBlanks)
-  if (blanks.length === (currentNumBlanks - 1)) {
-    blanksAnswers.removeChild(blankAnswers.lastChild);
-  } else if (blanks.length === (currentNumBlanks + 1)) {
-    const newAnswerLabel = document.createElement("label");
-    newAnswerLabel.htmlFor = `answer-${blanks.length}`;
-    const newAnswerField = document.createElement("input");
-    newAnswerField.type = "text";
-    newAnswerField.className = "w3-input";
-    newAnswerField.id = `answer-${blanks.length}`;
-    blanksAnswers.a
-  } else if (blanks.length !== currentNumBlanks) {
-    // this shouldn't happen
-    console.log("Something unexpected happened")
-  }
+const chooseQuestionFields = document.getElementsByClassName("question-type");
+for (const field of chooseQuestionFields) {
+  field.addEventListener("change", onChangeQuestionType);
 }
 
-const chooseQuestion = document.getElementById("type");
-const blankQuestion = document.getElementById("blank-question");
-chooseQuestion.addEventListener("change", onChangeQuestion);
-blankQuestion.addEventListener("input", onBlankQuestionChange);
+const choosePageFields = document.getElementsByClassName("page-type");
+for (const field of choosePageFields) {
+  field.addEventListener("change", onChangePageType);
+}
+
+const addQuestionButtons = document.getElementsByClassName("add-question");
+for (const button of addQuestionButtons) {
+  button.addEventListener("click", onAddQuestion);
+}
+
+const addPageButton = document.getElementById("add-page");
+addPageButton.addEventListener("click", onAddPage);
+
+
+function formatData() {
+  let data = [];
+
+  for (let pageId = 1; pageId <= currentPageTypes.length; pageId++) {
+    let fullPageData = {type: currentPageTypes[pageId - 1]};
+    let pageData = {};
+    const page = document.getElementById(pageId);
+
+    if (pageData["type"] === "content") {
+      const fileUrlInput = page.querySelector('input[type="url"]');
+      pageData["file"] = fileUrlInput.value;
+
+    } else { // === "questions"
+      let questions = [];
+
+      for (let questionId = 1; questionId <= currentQuestionTypes[pageId - 1].length; questionId++) {
+        let fullQuestionData = {type: currentQuestionTypes[pageId - 1][questionId - 1]}
+        let questionData = {};
+        const question = document.getElementById(`${pageId}-${questionId}`);
+
+        if (questionData["type"] === "term") {
+          questionData["question_text"] = question.children[3].children[0].children[1].value; // term
+          questionData["answer"] = question.children[3].children[0].children[3].value; // definition
+        } else { // === "mc"
+          //console.log(question.children[3])
+          questionData["question_text"] = question.children[3].children[1].children[2].value;
+
+          questionData["choices"] = [];
+          for (let i = 5; i <= 11; i += 2) {
+            questionData["choices"].push(question.children[3].children[1].children[i].value);
+          }
+
+          const correctChoiceIndex = question.children[3].children[1].children[13].value - 1;
+          questionData["correct_choice"] = questionData["choices"][correctChoiceIndex];
+        }
+
+        fullQuestionData["args"] = questionData;
+        questions.push(fullQuestionData);
+      }
+
+      pageData["questions"] = questions;
+    }
+
+    fullPageData["args"] = pageData;
+    data.push(fullPageData);
+  }
+
+  //console.log(data);
+  return data;
+}
+
+function sendData( data ) {
+  const XHR = new XMLHttpRequest();
+
+  let urlEncodedData = "",
+      urlEncodedDataPairs = [];
+
+  for(const name in data) {
+    urlEncodedDataPairs.push(encodeURIComponent(name) + '=' + encodeURIComponent(data[name]));
+  }
+
+  urlEncodedData = urlEncodedDataPairs.join("&").replace( /%20/g, '+' );
+
+  // Define what happens on successful data submission
+  XHR.addEventListener("load", function(event) {
+    document.querySelector(".main").innerText = this.responseText;
+  });
+
+  XHR.addEventListener("error", function(event) {
+    alert("Something went wrong");
+  });
+
+  
+  XHR.open('POST', '/api/create/package');
+
+  XHR.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+  XHR.send(urlEncodedData);
+}
+
+function onCreatePackage() {
+  const data = JSON.stringify(formatData());
+
+  const username = getCookie("username");
+  const password = getCookie("password");
+  const name = document.getElementById("package-name").value;
+
+  const fullData = {username: username, password: password, name: name, pages: data};
+
+  sendData(fullData);
+}
+
+const createPackageButton = document.getElementById("create-package");
+createPackageButton.addEventListener("click", onCreatePackage);
 
 </script>
 {% endblock %}

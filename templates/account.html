@@ -31,7 +31,7 @@
   <h1>Create</h1>
 
   <a href="#" class="w3-button w3-blue w3-margin-right">Create Room</a>
-  <a href="#" class="w3-button w3-blue">Create Package</a>
+  <a href="/editpackage" class="w3-button w3-blue">Create Package</a>
 
   <div class="w3-container">
     <h3>My Packages</h3>
@@ -39,7 +39,7 @@
       <div class="w3-third" onclick="window.location.assign('/package/{{package.id}}')">
         <div class="w3-card w3-container w3-margin card">
           <h4>{{package.name}}</h4>
-          <p>Made by: {{package.made_by.username}}</p>
+          <p>Made by: {{package.made_by}}</p>
           <p>{{package.pages | length}} page(s)</p>
         </div>
       </div>
