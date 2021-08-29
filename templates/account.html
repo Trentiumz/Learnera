@@ -14,10 +14,16 @@
   }
 
   .card:hover{
-    background-color: #fafafa;
+    background-color: #dfdfdf;
   }
+
 </style>
 
+<script>
+  $(function(){
+    $("#account").addClass("w3-white")
+  })
+</script>
 {% endblock %}
 
 {% block body %}
@@ -25,7 +31,7 @@
   <h1>Create</h1>
 
   <a href="#" class="w3-button w3-blue w3-margin-right">Create Room</a>
-  <a href="#" class="w3-button w3-blue">Create Lesson</a>
+  <a href="#" class="w3-button w3-blue">Create Package</a>
 
   <div class="w3-container">
     <h3>My Packages</h3>

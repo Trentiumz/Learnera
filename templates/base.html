@@ -100,14 +100,14 @@ $(function(){
 			<a class="w3-bar-item w3-button w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-blue" href="javascript:void(0);"
 			 onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
     <a href="/" class="w3-bar-item w3-button w3-hover-blue"><img height="35" src="/static/index/studyera.png"></a>
-    <a href="/" class="w3-bar-item w3-button w3-padding-large w3-hover-white w3-hide-medium w3-hide-small">Home</a>
-    <a href="/" class="w3-bar-item w3-button w3-padding-large w3-hover-white w3-hide-large"><i class="fa fa-home"></i></a>
+    <a href="/" class="w3-bar-item w3-button w3-padding-large w3-hover-white w3-hide-medium w3-hide-small" id="home">Home</a>
+    <a href="/" class="w3-bar-item w3-button w3-padding-large w3-hover-white w3-hide-large" id="home_alt"><i class="fa fa-home"></i></a>
 
-    <a href="/aboutus" class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-padding-large w3-hover-white">About Us</a>
+    <a href="/aboutus" class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-padding-large w3-hover-white" id="about_us">About Us</a>
 
-    <a href="/instructions" class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-padding-large w3-hover-white">Instructions</a>
+    <a href="/instructions" class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-padding-large w3-hover-white" id="instructions">Instructions</a>
     
-    <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white accountButton" style="display: none">Account</a>
+    <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white accountButton" id = "account" style="display: none">Account</a>
     <form action="/search">
       <input type="text" class="w3-bar-item w3-input w3-padding-large w3-right search" name="query" method="get" type="text" placeholder="Search...">
     </form>

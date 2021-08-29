@@ -58,11 +58,16 @@ def search():
     if query is None or query == "":
         return render_template("error.html",
                                message=f"Please enter a search term")
-    # do some searching, probably accepting GET/POST params
-    results = [
-        Package("Addition", User("User 3", "qwerty"), [], 0),
-        Package("Logarithms", User("User 10", "qwertyuiop"), [], 3)
-    ]  # example results
+    words = [word.strip() for word in query.split(" ")]
+    results = []
+    for id in packages:
+      package = packages[id]
+      has_all = True
+      for word in words:
+        has_all = has_all and word in package.name
+      if has_all:
+        results.append(package)
+
     return render_template("search.html",
                            query=query,
                            results=results,

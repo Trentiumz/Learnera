@@ -41,12 +41,12 @@ class Package:
 
 class Room:
   new_index = 1
-  def __init__(self, name: str, owner):
+  def __init__(self, name: str, owner, users):
     self.name = name
     self.owner = owner
-    self.packages = []
-  def add_package(self, package: Package):
-    self.packages.append(package)
+    self.users = users
+  def add_user(self, user):
+    self.packages.append(user)
 
 class User:
     def __init__(self, username, password):
