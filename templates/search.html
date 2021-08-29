@@ -23,10 +23,16 @@
   <h1>Search</h1>
   <p>Results for your search "{{query}}"</p>
   {% for result in results %}
-  <div class="w3-card w3-container w3-margin-bottom {{'w3-pale-blue' if type_(result).__name__ == 'Package' else 'w3-pale-green'}} card" onclick="window.location.assign('/package/{{result.id}}')">
-    <h3>{{result.name}}</h3>
-    <p>{{type_(result).__name__}} made by <strong>{{result.made_by}}</strong></p>
-  </div>
+    {% if type_(result).__name__ == 'Package' %}
+      <div class="w3-card w3-container w3-margin-bottom w3-pale-blue card" onclick="window.location.assign('/package/{{result.id}}')">
+        <h3>{{result.name}}</h3>
+        <p>{{type_(result).__name__}} made by <strong>{{result.made_by}}</strong></p>
+      </div>
+    {% elif type_(result).__name__ == 'User' %}
+      <div class="w3-card w3-container w3-margin-bottom w3-pale-green card" onclick="window.location.assign('/account/{{result.username}}')">
+        <h3>User {{result.username}}</h3>
+      </div>
+    {% endif %}
   {% endfor %}
 </div>
 {% endblock %}

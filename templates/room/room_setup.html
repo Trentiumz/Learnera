@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}<title>Create a Room</title>{% endblock %}
+
+{% block head %}
+  <script>
+    function onSubmit(){
+      $.post("/api/create/room", {
+        username: getCookie("username"),
+        password: getCookie("password"),
+        packages: "[]",
+        name: $("#room_name").val()
+      }, function(data, status){
+        if(data.includes("Account Details Invalid")){
+          $("#response").html("You don't seem to be signed in... try logging in again")
+        }else{
+          $("#response").html("Room created successfully")
+          setTimeout(function(){
+            window.location.replace("/room/" + data)
+          }, 1000)
+        }
+        $("#response").fadeIn(200)
+      })
+    }
+
+    $(function(){
+      $("#submit").click(onSubmit)
+      $("#room_name").keypress(function(e){
+        if(e.keyCode === 13){
+          onSubmit()
+        }
+      })
+    })
+  </script>
+
+  <style>
+    .main{
+      margin-top: 10%;
+      padding-left: 10%;
+      padding-right: 10%;
+      text-align: center;
+    }
+
+    #room_name{
+      transition_duration: 0.3s;
+    }
+
+    #submit{
+      border-color: black;
+      border-width: 2px;
+      border-style: solid;
+      box-shadow: 2px 2px 2px black;
+      transition-duration: 0.3s;
+      width: 100px;
+    }
+
+    #submit:hover{
+      outline: none;
+    }
+
+    .main h1{
+      font-weight: bold;
+    }
+  </style>
+{% endblock %}
+
+{% block body %}
+<div class="main">
+  <h1>Create Room</h1>
+  <p id="response" hidden></p>
+  <input class="w3-input" type="text" id="room_name" placeholder="Enter the room name: "></input><br>
+  <input class="w3-button w3-circle w3-ripple w3-white" id="submit" value="Create"></input>
+</div>
+{% endblock %}

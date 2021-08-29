@@ -81,6 +81,19 @@ const PAGE_TYPES = ["content", "questions"];
 
 let currentQuestionTypes = [["term"]];
 
+$(function(){
+  let username = getCookie("username")
+  let password = getCookie("password")
+  $.post("/api/checkuser", {
+    username: username,
+    password: password
+  }, function(data){
+    if(data === "false"){
+      window.location.assign("/login?message=" + encodeURI("Please Log In"))
+    }
+  })
+})
+
 function onChangeQuestionType(event) {
   const dropdown = event.target;
   const [pageId, questionId] = dropdown.parentElement.id.split("-");

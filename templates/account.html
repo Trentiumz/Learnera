@@ -6,11 +6,15 @@
 
 <style>
 	.main {
-		margin-top: 50px
+		margin-top: 50px;
 	}
 
   .card{
     transition-duration: 0.3s;
+    padding: 15px;
+    width: 30%;
+    border-radius: 15px;
+    margin-top: 5%;
   }
 
   .card:hover{
@@ -22,26 +26,68 @@
 <script>
   $(function(){
     $("#account").addClass("w3-white")
+
+    let username = getCookie("username")
+    let password = getCookie("password")
+    if(username == "{{username}}"){
+      $.post("/api/checkuser", {
+        username: username,
+        password: password
+      }, function(data, status){
+        if(data === "true"){
+          $("#edit_options").show()
+        }
+      })
+    }
   })
+
+  function joinRoom(id){
+    username = getCookie("username")
+    password = getCookie("password")
+    $.post("/api/room/" + id + "/join", {
+      username: username,
+      password: password
+    }, function(data, status){
+      if(data === "true"){
+        window.location.assign("/room/" + id)
+      }
+    })
+  }
 </script>
 {% endblock %}
 
 {% block body %}
 <div class="w3-container main">
-  <h1>Create</h1>
+  <div id="edit_options" style="display: none;">
+    <h1>Create</h1>
 
-  <a href="#" class="w3-button w3-blue w3-margin-right">Create Room</a>
-  <a href="/editpackage" class="w3-button w3-blue">Create Package</a>
+    <a href="/create/room" class="w3-button w3-blue w3-margin-right">Create Room</a>
+    <a href="/editpackage" class="w3-button w3-blue">Create Package</a><br>
+    <h4>Invitations</h4>
+    {% for room in invitations %}
+      <button onclick="joinRoom({{room.id}})" class="w3-button w3-blue w3-margin-right">{{room.name}}</button>
+    {% endfor %}
+  </div>
 
   <div class="w3-container">
+    <h3>My Rooms</h3>
+    {% for room in rooms %}
+      <div class="w3-card w3-margin-card card" onclick="window.location.assign('/room/{{room.id}}')">
+          <h4>{{room.name}}</h4>
+          <p>Owner: {{room.owner}}</p>
+          <p>{{room.packages | length}} packages</p>
+          <p>{{room.invited | length}} people invited</p>
+      </div>
+    {% endfor %}
+    <br>
+    <hr>
+
     <h3>My Packages</h3>
     {% for package in packages %}
-      <div class="w3-third" onclick="window.location.assign('/package/{{package.id}}')">
-        <div class="w3-card w3-container w3-margin card">
+      <div class="w3-card w3-margin-card card" onclick="window.location.assign('/package/{{package.id}}')">
           <h4>{{package.name}}</h4>
           <p>Made by: {{package.made_by}}</p>
           <p>{{package.pages | length}} page(s)</p>
-        </div>
       </div>
     {% endfor %}
   </div>

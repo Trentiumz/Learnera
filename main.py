@@ -1,7 +1,7 @@
 from flask import Flask
 from flask import render_template, redirect, abort
 from flask import request
-from models import User, Package, Page
+from models import User, Package, Page, Room
 from tools import next_id
 import urllib
 import json
@@ -10,6 +10,7 @@ app = Flask(__name__, template_folder="./templates", static_folder="./static")
 
 users = {}  # { username: User }
 packages = {}  # { package_id: Package }
+rooms = {} # { room_id: Room }
 
 
 @app.route("/")
@@ -44,11 +45,20 @@ def review():
     else:
         abort(404)
 
+@app.route("/room/<id>", methods=["GET"])
+def room_details(id):
+  id = int(id)
+  if id in rooms:
+    room = rooms[id]
+    return render_template("room/room_details.html", id=room.id, name=room.name, owner=users[room.owner], users=[users[username] for username in room.invited if room.id in users[username].rooms], packages=[packages[id] for id in room.packages])
+  else:
+    abort(404)
 
 @app.route("/account/<username>")
 def account(username):
     if username in users:
-      return render_template("account.html", packages=[packages[id] for id in users[username].packages])
+      print(users[username].invitations)
+      return render_template("account.html", packages=[packages[id] for id in users[username].packages], username=username, rooms=[rooms[id] for id in users[username].rooms], invitations=[rooms[id] for id in users[username].invitations])
     abort(404)
 
 
@@ -68,11 +78,18 @@ def search():
       if has_all:
         results.append(package)
 
+    for username in users:
+      if word in username or username in word:
+        results.append(users[username])
+
     return render_template("search.html",
                            query=query,
                            results=results,
                            type_=type)
 
+@app.route("/create/room")
+def room_setup():
+  return render_template("room/room_setup.html")
 
 # TEMPORARY, JUST FOR MAKING FRONT END
 @app.route("/editpackage")
@@ -91,7 +108,6 @@ def package_details(id=None):
                                pages=package.pages,
                                id=id)
     abort(404)
-
 
 @app.route("/api/package_details")
 def get_package():
@@ -119,6 +135,66 @@ def get_content_list():
         "args": page.args
     } for page in page_list])
 
+@app.route("/api/room/<id>/join", methods=["POST"])
+def join_room(id):
+  id = int(id)
+  if id in rooms:
+    username = request.form["username"]
+    password = request.form["password"]
+    if username in users and users[username].password == password and username in rooms[id].invited:
+      users[username].join_room(id)
+      return "true"
+    else:
+      return "false"
+  abort(404)
+
+@app.route("/api/room/<id>/invite", methods=["POST"])
+def invite_to_room(id):
+  id = int(id)
+  if id in rooms:
+    username = request.form["username"]
+    password = request.form["password"]
+    invite_name = request.form["invite_name"]
+    if username in users and users[username].password == password and rooms[id].owner == username and invite_name in users:
+      users[invite_name].invite_to_room(id)
+      rooms[id].invited.append(invite_name)
+      return "done"
+    else:
+      return "param_fail"
+  else:
+    abort(404)
+
+@app.route("/api/room/<id>/add_package", methods=["POST"])
+def add_package_to_room(id):
+  id = int(id)
+  username = request.form["username"]
+  password = request.form["password"]
+  package_id = int(request.form["package"])
+  if id in rooms:
+    if username in users and users[username].password == password and rooms[id].owner == username and package_id in packages:
+      rooms[id].add_package(package_id)
+      return "done"
+    else:
+      return "param_fail"
+  else:
+    abort(404)
+
+@app.route("/api/create/room", methods=["POST"])
+def api_create_room():
+  owner_user = request.form["username"]
+  owner_pass = request.form["password"]
+  if owner_user in users and users[owner_user].password == owner_pass:
+    packages = json.loads(request.form["packages"])
+    room_name = request.form["name"]
+    return str(create_new_room(room_name, packages, owner_user))
+  else:
+    return "Account Details Invalid"
+
+def create_new_room(name, packages: list, owner: str):
+  id = next_id(Room, rooms)
+  rooms[id] = Room(id, name, owner, packages)
+  users[owner].join_room(id)
+  return id
 
 @app.route("/api/create/package", methods=["POST"])
 def create_package():
@@ -141,7 +217,6 @@ def create_new_package(name, user: User, pages: list):
     packages[id] = Package(name, user.username, pages, id)
     user.add_package(id)
 
-
 @app.route("/api/create/user", methods=["POST"])
 def add_user():
     username = request.form["username"]
@@ -155,7 +230,6 @@ def add_user():
         return redirect("/login?message=" +
                         urllib.parse.quote_plus("You can now log in"),
                         code=302)
-
 
 @app.route("/checkuser", methods=["POST"])
 def check_user():
@@ -179,11 +253,9 @@ def api_check_user():
         return "false"
     return "true"
 
-
 @app.route("/aboutus")
 def aboutus():
     return render_template("aboutus.html")
-
 
 if __name__ == "__main__":
     users["tester"] = User("tester", "password")
@@ -211,5 +283,6 @@ if __name__ == "__main__":
                 "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
             })
     ])
+    users["test"] = User("test", "test")
     print(packages)
     app.run(host="0.0.0.0", port=3000)

@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}<title>{{name}} details</title>{% endblock %}
+
+{% block head %}
+<style>
+  .main{
+    margin-top: 10%;
+    text-align: center;
+  }
+
+  ul{
+    display: table;
+    margin: 0 auto;
+  }
+
+  .main h1{
+    font-weight: bold;
+  }
+
+  ul li{
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 10px;
+    border-color: black;
+    border-style: solid;
+    box-shadow: 2px 2px 2px black;
+    margin: 5px;
+    transition-duration: 0.3s;
+  }
+
+  ul li:hover{
+    background-color: #D4EFFF;
+    transition-duration: 0.3s;
+  }
+
+  ul li h4{
+    font-weight: bolder;
+  }
+
+  .top_text{
+    margin-left: 40%;
+    width: 20%;
+    background-color: #eeeeee;
+    border-radius: 15px;
+    margin-bottom: 15px;
+  }
+
+  .alter_message{
+    color: blue;
+  }
+</style>
+
+<script>
+  $(function(){
+    username = getCookie("username")
+    password = getCookie("password")
+    $.post("/api/checkuser", {
+      username: username,
+      password: password
+    }, function(data, status){
+      if(data === "true" && username === "{{owner.username}}"){
+        $("#invite").show().keypress(function(e){
+          if(e.keyCode === 13){
+            $.post("/api/room/{{id}}/invite", {
+              username: username,
+              password: password,
+              invite_name: $(this).val()
+            }, function(data, status){
+              if(data != "done"){
+                $("#invite_message").html("Something went wrong...")
+              }else{
+                $("#invite_message").html("Invited")
+              }
+              $("#invite_message").show().fadeOut(1000)
+            })
+          }
+        })
+
+        $("#package_add").show().keypress(function(e){
+          if(e.keyCode == 13){
+            $.post("/api/room/{{id}}/add_package", {
+              username: username,
+              password: password,
+              package: $(this).val()
+            }, function(data, status){
+              if(data != "done"){
+                $("#package_add_message").html("Something went wrong...")
+              }else{
+                $("#package_add_message").html("Added")
+                window.location.reload()
+              }
+              $("#package_add_message").show().fadeOut(1000)
+            })
+          }
+        })
+      }
+    })
+  })
+</script>
+{% endblock %}
+
+{% block body %}
+  <div class="main">
+    <h1>{{name}}</h1>
+    <p>Owner: {{owner.username}}</p>
+
+    <input type="text" class="w3-input top_text" id="invite" placeholder="Invite someone by their username..." style="display: none"></input>
+    <p class="alter_message" id="invite_message" hidden></p>
+    <input type="text" class="w3-input top_text" id="package_add" placeholder="Enter Package ID to add it" style="display: none"></input>
+    <p class="alter_message" id="package_add_message" hidden></p>
+
+    <h2>Users</h2>
+    <ul>
+      {% for user in users %}
+        <li onclick="window.location.assign('/account/{{user.username}}')">
+          <p>{{user.username}}</p>
+        </li>
+      {% endfor %}
+    </ul>
+    <br>
+
+    <ul>
+      <h2>Packages</h2>
+      {% for package in packages %}
+        <li onclick="window.location.assign('/package/{{package.id}}')">
+            <h4>{{package.name}}</h4>
+            <p>{{package.pages | length}} pages</p>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endblock %}
