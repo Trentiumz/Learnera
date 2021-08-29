@@ -12,13 +12,13 @@ args: {questions: [
 Question: stored as a dict
 
 type: mc
-args: {question_text: text for the question, 
-      choices: [list of strings for each choice],
-      correct_choice: string of correct choice}
+question_text: text for the question, 
+choices: [list of strings for each choice],
+correct_choice: string of correct choice
 
 type: term
-args: {question_text: text for the question,
-      answer: the correct term/word to input}
+question_text: text for the question,
+answer: the correct term/word to input
 
 """
 

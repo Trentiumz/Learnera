@@ -276,7 +276,7 @@ function formatData() {
     let pageData = {};
     const page = document.getElementById(pageId);
 
-    if (pageData["type"] === "content") {
+    if (fullPageData["type"] === "content") {
       const fileUrlInput = page.querySelector('input[type="url"]');
       pageData["file"] = fileUrlInput.value;
 
@@ -284,8 +284,7 @@ function formatData() {
       let questions = [];
 
       for (let questionId = 1; questionId <= currentQuestionTypes[pageId - 1].length; questionId++) {
-        let fullQuestionData = {type: currentQuestionTypes[pageId - 1][questionId - 1]}
-        let questionData = {};
+        let questionData = {type: currentQuestionTypes[pageId - 1][questionId - 1]};
         const question = document.getElementById(`${pageId}-${questionId}`);
 
         if (questionData["type"] === "term") {
@@ -304,8 +303,7 @@ function formatData() {
           questionData["correct_choice"] = questionData["choices"][correctChoiceIndex];
         }
 
-        fullQuestionData["args"] = questionData;
-        questions.push(fullQuestionData);
+        questions.push(questionData);
       }
 
       pageData["questions"] = questions;
